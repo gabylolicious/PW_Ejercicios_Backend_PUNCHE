@@ -17,15 +17,13 @@ class Task(BaseModel):
     priority : int = Field(..., ge=1, le=5)  # obligatorio, valor entre 1 y 5
     complete : bool = False  # por defecto es False
 
-class Task(BaseModel):
-    id : str
+class TaskCreate(BaseModel):
     title : str
     description : Optional[str] = None # opcional, puede o no enviarse al backend
     priority : int = Field(..., ge=1, le=5)  # obligatorio, valor entre 1 y 5
-    complete : bool = False  # por defecto es False
 
 @router.post("/tasks")
-async def create_task(payload : Task):
+async def create_task(payload : TaskCreate):
     task_id = str(uuid4())
 
     task = Task(
@@ -35,3 +33,9 @@ async def create_task(payload : Task):
         priority = payload.priority,
         complete = False
     )
+
+    tasks_repertory[task_id] = task
+    return {
+        "msg" : "Task creado exitosamente",
+        "data" : task
+    }
